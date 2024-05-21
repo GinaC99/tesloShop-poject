@@ -13,6 +13,7 @@ yarn-error.log*
 lerna-debug.log*
 .env.*
 postgres/
+package-lock.json
 # OS
 .DS_Store
 
