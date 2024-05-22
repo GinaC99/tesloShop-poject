@@ -80,8 +80,14 @@ export class ProductsService {
       ...updateProductDto
     })
     if (!productData) throw new NotFoundException(`No se encuntro el registro ${id} para realizar la actualizacio`)
-    await this.productRepositori.save(productData);
+    try {
+      await this.productRepositori.save(productData);
       return `Actualizacion realiza`;
+      
+    } catch (error) {
+      this.handlerException(error)
+    }
+    
   }
 
   async remove(id: string) {
