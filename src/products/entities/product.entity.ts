@@ -56,9 +56,12 @@ export class Product {
     @OneToMany(
         () => ProductImage,
         (productImage)=> productImage.product,
-        {cascade:true}
+        {
+            cascade:true,
+            eager: true // !! Cargar las relaciones de la db SQL
+        }
     )
-    image?:ProductImage
+    image?:ProductImage[]
 
     @BeforeInsert()
     checkSlugInsert(){
