@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from './product.entity';
 
-@Entity()
+@Entity({name: 'product_images'})
 export class ProductImage {
     
     @PrimaryGeneratedColumn()
@@ -14,7 +14,7 @@ export class ProductImage {
         () => Product,
         (product) => product.image,
         {
-            onDelete:"CASCADE" // !! Esto es para eliminar las relaciones
+            onDelete:"CASCADE" // !! Esto es para eliminar las relaciones en cascada
         }
     )
     product:Product

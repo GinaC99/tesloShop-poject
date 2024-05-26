@@ -31,7 +31,6 @@ export class ProductsService {
         ...productDetails,
         image: image.map(image => this.prodcutImageRepository.create({ url: image }))
       });
-      this.logger.log("🚀 ~ ProductsService ~ create ~ product:", JSON.stringify(product));
       await this.productRepositori.save(product);
       return { ...product, image };
     } catch (error) {
