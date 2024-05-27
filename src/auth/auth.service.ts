@@ -29,7 +29,7 @@ export class AuthService {
       delete newUser.password;
       delete newUser.isActive;
       return {...newUser, 
-        token: this.getJwtToken({email: newUser.email})
+        token: this.getJwtToken({id: newUser.id})
       };
       
     } catch (error) {
@@ -48,7 +48,8 @@ export class AuthService {
         },
         select: {
           email: true, 
-          password: true
+          password: true,
+          id: true
         }
       });
       
@@ -56,7 +57,7 @@ export class AuthService {
         throw new UnauthorizedException('El usuario no esta autorizado')
       if(!bcrypt.compareSync(password, user.password))
         throw new UnauthorizedException('El usuario no esta autorizado')
-      return {...user, token: this.getJwtToken({ email: user.email})};
+      return {...user, token: this.getJwtToken({ id: user.id})};
 
     } catch (error) {
       this.handlerException(error);
