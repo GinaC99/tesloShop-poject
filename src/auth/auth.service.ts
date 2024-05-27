@@ -53,7 +53,6 @@ export class AuthService {
         throw new UnauthorizedException('El usuario no esta autorizado')
       return user;
 
-
     } catch (error) {
       this.handlerException(error);
     }
