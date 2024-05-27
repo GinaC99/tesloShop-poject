@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { Logger } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUser, LogingUser } from './dto';
+import { JwtPayload } from './interfaces/jwr-paylod.interface';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable()
@@ -14,18 +16,21 @@ export class AuthService {
   
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService
   ){}
   
   async create(createUser: CreateUser) {
     try {
 
       const { password, ...userData } = createUser;
-      const newUser = await this.userRepository.create({...userData, password: bcrypt.hashSync(password, parseInt(process.env.ROUND_HASH) )});
+      const newUser = this.userRepository.create({...userData, password: bcrypt.hashSync(password, parseInt(process.env.ROUND_HASH) )});
       await this.userRepository.save(newUser)
       delete newUser.password;
       delete newUser.isActive;
-      return newUser;
+      return {...newUser, 
+        token: this.getJwtToken({email: newUser.email})
+      };
       
     } catch (error) {
       this.handlerException(error)
@@ -51,7 +56,7 @@ export class AuthService {
         throw new UnauthorizedException('El usuario no esta autorizado')
       if(!bcrypt.compareSync(password, user.password))
         throw new UnauthorizedException('El usuario no esta autorizado')
-      return user;
+      return {...user, token: this.getJwtToken({ email: user.email})};
 
     } catch (error) {
       this.handlerException(error);
@@ -59,6 +64,9 @@ export class AuthService {
 
   }
 
+    private getJwtToken(payload: JwtPayload){
+      return this.jwtService.sign(payload)
+    }
 
 
   private handlerException(error: any) {

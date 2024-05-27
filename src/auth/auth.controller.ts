@@ -15,4 +15,8 @@ export class AuthController {
     return this.authService.login(loginUser);
   }
 
+  @Get()
+  testingPrivateRoute(){
+    return 'hey'
+  }
 }
