@@ -1,7 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, SetMetadata } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUser, LogingUser } from './dto';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from './entities/user.entity';
+import { UserRoleGuard } from './guards/user-role/user-role.guard';
+import { ValidRoles } from './interfaces';
+import { Auth, RawHeaders, RoleProtected, GetUser } from './decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -18,7 +22,31 @@ export class AuthController {
 
   @Get()
   @UseGuards(AuthGuard())
-  testingPrivateRoute(){
-    return 'hey'
+  testingPrivateRoute(
+    @Req() request: Express.Request,
+    @GetUser() user: User,
+    @GetUser('email') userEmail:string,
+    @RawHeaders() rawHeaders: string[]
+  ){
+    return {...user, userEmail, rawHeaders};
+  }
+
+  @Get('private2')
+  @RoleProtected(ValidRoles.user) // !Esto sustituye lo de abajo
+  // @SetMetadata('roles',['admin', 'super-user'] ) // !! esto es obligatorio, para poder tener el contexto de los usuarios y todo
+  @UseGuards(AuthGuard(), UserRoleGuard)
+  privateRoute(
+    @GetUser() user: User,
+  ){
+    return {user};
+  }
+
+
+  @Get('private3')
+  @Auth(ValidRoles.admin)
+  privateRoute3(
+    @GetUser() user: User,
+  ){
+    return {user};
   }
 }

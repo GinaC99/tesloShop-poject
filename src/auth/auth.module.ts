@@ -21,8 +21,6 @@ import { JwtStategy } from './strategies/jwt.strategies';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        // console.log("🚀 ~ process.env.JWT_SECRET:", configService.get('JWT_SECRET'))
-        // console.log("🚀 ~ process.env.JWT_SECRET:", process.env.JWT_SECRET)
         return {
           secret: process.env.JWT_SECRET,
           signOptions: {
