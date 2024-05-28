@@ -38,6 +38,29 @@ export class AuthService {
 
   }
 
+  // !!ESTE ES MI ENDPOINT PARA LA TAREA
+
+  async checkAuthStatus(user:User){
+    const {id} = user
+    const dataUser = await this.userRepository.findOne({
+      where: {id},
+      select: {
+        email: true, 
+        password: true,
+        id: true
+      }
+    })
+    const token = this.getJwtToken({id})
+    return {...dataUser, 
+      token
+    };
+
+  }
+
+  // async checkAuthStatus(user:User){
+
+  // }
+
   async login(loginUser: LogingUser){
     try {
       const {email, password} = loginUser;

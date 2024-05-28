@@ -20,6 +20,15 @@ export class AuthController {
     return this.authService.login(loginUser);
   }
 
+  @Get('check-token')
+  @Auth()
+  checkAuthStatus(
+    @Req() request: Express.Request,
+    @GetUser() user:User
+  ) {
+    return this.authService.checkAuthStatus(user);
+  }
+
   @Get()
   @UseGuards(AuthGuard())
   testingPrivateRoute(
