@@ -7,6 +7,7 @@ import { DataSource, Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid'
 import { ProductImage } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -21,7 +22,7 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) { }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     this.logger.log('-------------------------------------------')
     this.logger.log('Creacion del producto')
     this.logger.log('-------------------------------------------')
@@ -29,6 +30,7 @@ export class ProductsService {
       const { image = [], ...productDetails } = createProductDto;
       const product = this.productRepositori.create({
         ...productDetails,
+        user,
         image: image.map(image => this.prodcutImageRepository.create({ url: image }))
       });
       await this.productRepositori.save(product);
@@ -93,7 +95,7 @@ export class ProductsService {
     }
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     this.logger.log('-------------------------------------------')
     this.logger.log('Actualizacion de un producto')
     this.logger.log('-------------------------------------------')
@@ -124,7 +126,7 @@ export class ProductsService {
         })
         productData.image = image.map(image => this.prodcutImageRepository.create({url: image}))
       }
-
+      productData.user = user;
       await queryRuner.manager.save(productData)
       await queryRuner.commitTransaction()
       await queryRuner.release()

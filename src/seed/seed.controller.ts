@@ -8,12 +8,12 @@ export class SeedController {
   constructor(private readonly seedService: SeedService) {}
 
   @Get()
-  @Auth(ValidRoles.admin)
+  // @Auth(ValidRoles.admin)
   executeSeed() {
-    return this.seedService.newSeed();
+    return this.seedService.runSeed();
   }
   @Delete()
-  @Auth(ValidRoles.admin)
+  // @Auth(ValidRoles.admin)
   deleteSeed() {
     return this.seedService.deleteAllProducts();
   }
